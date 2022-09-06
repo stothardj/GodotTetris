@@ -75,6 +75,9 @@ func _process(_delta):
 		try_rotate(-1)
 	elif rotate_dir > 0:
 		try_rotate(1)
+	
+	if Input.is_action_just_pressed("ui_down"):
+		try_move(Vector2.DOWN)
 
 
 func _on_Timer_timeout():

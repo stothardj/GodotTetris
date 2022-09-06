@@ -79,11 +79,31 @@ func _process(_delta):
 	if Input.is_action_just_pressed("ui_down"):
 		try_move(Vector2.DOWN)
 
+func is_complete_row(row: int) -> bool:
+	for col in range(0,BOARD_WIDTH-1):
+		if empty_position(Vector2(col, row)):
+			return false
+	return true
+
+func shift_down(row):
+	if row == 0:
+		for col in range(0,BOARD_WIDTH-1):
+			tilemap.set_cell(col, row, BOARD_BACKGROUND)
+		return
+	for col in range(0,BOARD_WIDTH-1):
+		tilemap.set_cell(col, row, tilemap.get_cell(col, row-1))
+	shift_down(row-1)
+
+func clear_rows():
+	for row in range(BOARD_HEIGHT-1,0,-1):
+		while is_complete_row(row):
+			shift_down(row)
 
 func _on_Timer_timeout():
 	if not try_move(Vector2.DOWN):
 		var shape_color = shape.shape_type
 		for p in shape.block_positions():
 			tilemap.set_cellv(p, shape_color)
+		clear_rows()
 		generate_shape()
 

@@ -78,6 +78,12 @@ func _process(_delta):
 	
 	if Input.is_action_just_pressed("ui_down"):
 		try_move(Vector2.DOWN)
+		
+	if Input.is_action_just_pressed("ui_snap_down"):
+		while try_move(Vector2.DOWN):
+			# For side-effect of try_move
+			pass
+		shape_at_bottom()
 
 func is_complete_row(row: int) -> bool:
 	for col in range(0,BOARD_WIDTH-1):
@@ -99,11 +105,13 @@ func clear_rows():
 		while is_complete_row(row):
 			shift_down(row)
 
+func shape_at_bottom():
+	var shape_color = shape.shape_type
+	for p in shape.block_positions():
+		tilemap.set_cellv(p, shape_color)
+	clear_rows()
+	generate_shape()
+
 func _on_Timer_timeout():
 	if not try_move(Vector2.DOWN):
-		var shape_color = shape.shape_type
-		for p in shape.block_positions():
-			tilemap.set_cellv(p, shape_color)
-		clear_rows()
-		generate_shape()
-
+		shape_at_bottom()

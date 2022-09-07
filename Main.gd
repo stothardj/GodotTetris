@@ -12,6 +12,7 @@ const BOARD_BACKGROUND = 7
 
 var shape = ShapeResource.instance()
 var shape_preview = ShapeResource.instance()
+var score = 0
 
 onready var tilemap = $TileMap
 
@@ -106,9 +107,15 @@ func shift_down(row):
 		tilemap.set_cell(col, row, tilemap.get_cell(col, row-1))
 	shift_down(row-1)
 
+func increase_score():
+	score += 1
+	if score % 5 == 0:
+		$Timer.wait_time -= 0.05
+
 func clear_rows():
 	for row in range(BOARD_HEIGHT-1,0,-1):
 		while is_complete_row(row):
+			increase_score()
 			shift_down(row)
 
 func shape_at_bottom():

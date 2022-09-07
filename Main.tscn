@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
+[ext_resource path="res://custom_dynamicfont.tres" type="DynamicFont" id=1]
 [ext_resource path="res://images/blocks.png" type="Texture" id=2]
 [ext_resource path="res://Main.gd" type="Script" id=3]
 
@@ -129,5 +130,13 @@ format = 1
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.5
 autostart = true
+
+[node name="ScoreLabel" type="Label" parent="."]
+margin_left = 643.0
+margin_top = 119.0
+margin_right = 760.0
+margin_bottom = 164.0
+custom_fonts/font = ExtResource( 1 )
+text = "Score: 0"
 
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

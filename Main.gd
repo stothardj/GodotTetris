@@ -19,7 +19,7 @@ onready var tilemap = $TileMap
 func _ready():
 	randomize()
 	shape.set_position_fn(funcref(self, "world_position"))
-	shape_preview.position = Vector2(700,200)
+	shape_preview.position = Vector2(685,300)
 	shape_preview.block_scale = BLOCK_SCALE
 	shape_preview.shape_type = randi() % ShapeScript.ShapeConfiguration.size()
 	initialize_board()
@@ -109,6 +109,7 @@ func shift_down(row):
 
 func increase_score():
 	score += 1
+	$ScoreLabel.text = "Score: %s" % score
 	if score % 5 == 0:
 		$Timer.wait_time -= 0.05
 

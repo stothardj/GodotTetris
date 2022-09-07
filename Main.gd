@@ -11,15 +11,20 @@ const BOARD_HEIGHT = 25
 const BOARD_BACKGROUND = 7
 
 var shape = ShapeResource.instance()
+var shape_preview = ShapeResource.instance()
 
 onready var tilemap = $TileMap
 
 func _ready():
 	randomize()
 	shape.set_position_fn(funcref(self, "world_position"))
+	shape_preview.position = Vector2(700,200)
+	shape_preview.block_scale = BLOCK_SCALE
+	shape_preview.shape_type = randi() % ShapeScript.ShapeConfiguration.size()
 	initialize_board()
 	generate_shape()
 	add_child(shape)
+	add_child(shape_preview)
 
 func initialize_board():
 	for x in range(0, BOARD_WIDTH):
@@ -32,8 +37,9 @@ func world_position(map_position):
 func generate_shape():
 	shape.rotations = 0
 	shape.map_position = Vector2(BOARD_WIDTH/2,0)
-	shape.shape_type = randi() % ShapeScript.ShapeConfiguration.size()
+	shape.shape_type = shape_preview.shape_type
 	shape.block_scale = BLOCK_SCALE
+	shape_preview.shape_type = randi() % ShapeScript.ShapeConfiguration.size()
 
 func in_board(map_position: Vector2):
 	if map_position.x < 0 or map_position.x >= BOARD_WIDTH:

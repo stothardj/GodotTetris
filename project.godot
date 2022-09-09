@@ -29,6 +29,7 @@ _global_script_class_icons={
 config/name="Tetris"
 run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
+config/windows_native_icon="res://icon.ico"
 
 [display]
 

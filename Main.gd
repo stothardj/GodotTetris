@@ -18,6 +18,7 @@ var start_wait_time
 onready var tilemap = $TileMap
 onready var timer = $Timer
 onready var score_label = $ScoreLabel
+onready var paused_label = $CanvasLayer/PausedLabel
 
 func _ready():
 	randomize()
@@ -100,6 +101,14 @@ func _process(_delta):
 			# For side-effect of try_move
 			pass
 		shape_at_bottom()
+	
+	if Input.is_action_just_pressed("ui_pause"):
+		toggle_pause()
+		
+func toggle_pause():
+	var paused = !timer.is_paused()
+	paused_label.visible = paused
+	timer.set_paused(paused)
 
 func is_complete_row(row: int) -> bool:
 	for col in range(0,BOARD_WIDTH-1):

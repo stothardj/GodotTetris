@@ -13,19 +13,28 @@ const BOARD_BACKGROUND = 7
 var shape = ShapeResource.instance()
 var shape_preview = ShapeResource.instance()
 var score = 0
+var start_wait_time
 
 onready var tilemap = $TileMap
+onready var timer = $Timer
+onready var score_label = $ScoreLabel
 
 func _ready():
 	randomize()
+	start_wait_time = timer.wait_time
 	shape.set_position_fn(funcref(self, "world_position"))
 	shape_preview.position = Vector2(685,300)
 	shape_preview.block_scale = BLOCK_SCALE
 	shape_preview.shape_type = randi() % ShapeScript.ShapeConfiguration.size()
-	initialize_board()
-	generate_shape()
+	restart()
 	add_child(shape)
 	add_child(shape_preview)
+
+func restart():
+	timer.wait_time = start_wait_time
+	set_score(0)
+	initialize_board()
+	generate_shape()
 
 func initialize_board():
 	for x in range(0, BOARD_WIDTH):
@@ -107,11 +116,14 @@ func shift_down(row):
 		tilemap.set_cell(col, row, tilemap.get_cell(col, row-1))
 	shift_down(row-1)
 
+func set_score(new_score):
+	score = new_score
+	score_label.text = "Score: %s" % score
+
 func increase_score():
-	score += 1
-	$ScoreLabel.text = "Score: %s" % score
+	set_score(score + 1)
 	if score % 5 == 0:
-		$Timer.wait_time -= 0.05
+		timer.wait_time *= 0.9
 
 func clear_rows():
 	for row in range(BOARD_HEIGHT-1,0,-1):
@@ -119,12 +131,20 @@ func clear_rows():
 			increase_score()
 			shift_down(row)
 
+func generated_shape_overlaps() -> bool:
+	for block_position in shape.block_positions():
+			if block_position.y >= 0 and not empty_position(block_position):
+				return true
+	return false
+
 func shape_at_bottom():
 	var shape_color = shape.shape_type
 	for p in shape.block_positions():
 		tilemap.set_cellv(p, shape_color)
 	clear_rows()
 	generate_shape()
+	if generated_shape_overlaps():
+		restart()
 
 func _on_Timer_timeout():
 	if not try_move(Vector2.DOWN):

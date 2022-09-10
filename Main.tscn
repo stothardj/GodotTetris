@@ -122,7 +122,7 @@
 script = ExtResource( 3 )
 
 [node name="TileMap" type="TileMap" parent="."]
-position = Vector2( 100, 100 )
+position = Vector2( 100, 30 )
 scale = Vector2( 0.5, 0.5 )
 tile_set = SubResource( 1 )
 format = 1
@@ -132,10 +132,10 @@ wait_time = 0.5
 autostart = true
 
 [node name="ScoreLabel" type="Label" parent="."]
-margin_left = 643.0
-margin_top = 119.0
-margin_right = 760.0
-margin_bottom = 164.0
+margin_left = 602.0
+margin_top = 67.0
+margin_right = 719.0
+margin_bottom = 112.0
 custom_fonts/font = ExtResource( 1 )
 text = "Score: 0"
 
@@ -143,10 +143,10 @@ text = "Score: 0"
 
 [node name="PausedLabel" type="Label" parent="CanvasLayer"]
 visible = false
-margin_left = 285.0
-margin_top = 457.0
-margin_right = 395.0
-margin_bottom = 502.0
+margin_left = 293.0
+margin_top = 494.0
+margin_right = 403.0
+margin_bottom = 539.0
 custom_fonts/font = ExtResource( 1 )
 text = "Paused"
 

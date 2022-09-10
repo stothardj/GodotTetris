@@ -4,10 +4,10 @@ var ShapeResource = preload("res://TetrisShape.tscn")
 var ShapeScript = preload("res://TetrisShape.gd")
 
 const SPRITE_SIZE = 64
-const BLOCK_SCALE = 0.5
+const BLOCK_SCALE = 0.75
 const BLOCK_SIZE = SPRITE_SIZE * BLOCK_SCALE
-const BOARD_WIDTH = 15
-const BOARD_HEIGHT = 25
+const BOARD_WIDTH = 10
+const BOARD_HEIGHT = 21
 const BOARD_BACKGROUND = 7
 
 var shape = ShapeResource.instance()
@@ -22,9 +22,10 @@ onready var paused_label = $CanvasLayer/PausedLabel
 
 func _ready():
 	randomize()
+	tilemap.scale = Vector2(BLOCK_SCALE, BLOCK_SCALE)
 	start_wait_time = timer.wait_time
 	shape.set_position_fn(funcref(self, "world_position"))
-	shape_preview.position = Vector2(685,300)
+	shape_preview.position = Vector2(670,200)
 	shape_preview.block_scale = BLOCK_SCALE
 	shape_preview.shape_type = randi() % ShapeScript.ShapeConfiguration.size()
 	restart()

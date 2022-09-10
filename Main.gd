@@ -81,6 +81,12 @@ func try_rotate(rotation_change: int) -> bool:
 	return true
 
 func _process(_delta):
+	if Input.is_action_just_pressed("ui_pause"):
+		toggle_pause()
+	
+	if timer.is_paused():
+		return
+		
 	var move_dir = int(Input.is_action_just_pressed("ui_right")) - int(Input.is_action_just_pressed("ui_left"))
 	if move_dir < 0:
 		try_move(Vector2.LEFT)
@@ -101,9 +107,6 @@ func _process(_delta):
 			# For side-effect of try_move
 			pass
 		shape_at_bottom()
-	
-	if Input.is_action_just_pressed("ui_pause"):
-		toggle_pause()
 		
 func toggle_pause():
 	var paused = !timer.is_paused()

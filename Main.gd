@@ -6,23 +6,20 @@ var ShapeScript = preload("res://TetrisShape.gd")
 const SPRITE_SIZE = 64
 const BLOCK_SCALE = 0.75
 const BLOCK_SIZE = SPRITE_SIZE * BLOCK_SCALE
-const BOARD_WIDTH = 10
-const BOARD_HEIGHT = 21
-const BOARD_BACKGROUND = 7
 
 var shape = ShapeResource.instance()
 var shape_preview = ShapeResource.instance()
 var score = 0
 var start_wait_time
 
-onready var tilemap = $TileMap
+onready var board = $TetrisBoard
 onready var timer = $Timer
 onready var score_label = $ScoreLabel
 onready var paused_label = $CanvasLayer/PausedLabel
 
 func _ready():
 	randomize()
-	tilemap.scale = Vector2(BLOCK_SCALE, BLOCK_SCALE)
+	board.scale = Vector2(BLOCK_SCALE, BLOCK_SCALE)
 	start_wait_time = timer.wait_time
 	shape.set_position_fn(funcref(self, "world_position"))
 	shape_preview.position = Vector2(670,200)
@@ -35,37 +32,24 @@ func _ready():
 func restart():
 	timer.wait_time = start_wait_time
 	set_score(0)
-	initialize_board()
+	board.clear()
 	generate_shape()
 
-func initialize_board():
-	for x in range(0, BOARD_WIDTH):
-		for y in range(0, BOARD_HEIGHT):
-			tilemap.set_cell(x, y, BOARD_BACKGROUND)
-
 func world_position(map_position):
-	return tilemap.position + tilemap.map_to_world(map_position) * tilemap.scale + Vector2(BLOCK_SIZE/2, BLOCK_SIZE/2)
+	return board.position + board.map_to_world(map_position) * board.scale + Vector2(BLOCK_SIZE/2, BLOCK_SIZE/2)
 	
 func generate_shape():
 	shape.rotations = 0
-	shape.map_position = Vector2(BOARD_WIDTH/2,0)
+	shape.map_position = Vector2(board.width/2,0)
 	shape.shape_type = shape_preview.shape_type
 	shape.block_scale = BLOCK_SCALE
 	shape_preview.shape_type = randi() % ShapeScript.ShapeConfiguration.size()
 
-func in_board(map_position: Vector2):
-	if map_position.x < 0 or map_position.x >= BOARD_WIDTH:
-		return false
-	return map_position.y < BOARD_HEIGHT
-
-func empty_position(map_position: Vector2):
-	return tilemap.get_cellv(map_position) == BOARD_BACKGROUND
-
 func all_valid_positions(block_positions):
 	for block_position in block_positions:
-		if not in_board(block_position):
+		if not board.contains(block_position):
 			return false
-		if block_position.y >= 0 and not empty_position(block_position):
+		if block_position.y >= 0 and not board.is_empty_position(block_position):
 			return false
 	return true
 
@@ -114,21 +98,6 @@ func toggle_pause():
 	paused_label.visible = paused
 	timer.set_paused(paused)
 
-func is_complete_row(row: int) -> bool:
-	for col in range(0,BOARD_WIDTH-1):
-		if empty_position(Vector2(col, row)):
-			return false
-	return true
-
-func shift_down(row):
-	if row == 0:
-		for col in range(0,BOARD_WIDTH-1):
-			tilemap.set_cell(col, row, BOARD_BACKGROUND)
-		return
-	for col in range(0,BOARD_WIDTH-1):
-		tilemap.set_cell(col, row, tilemap.get_cell(col, row-1))
-	shift_down(row-1)
-
 func set_score(new_score):
 	score = new_score
 	score_label.text = "Score: %s" % score
@@ -139,21 +108,21 @@ func increase_score():
 		timer.wait_time *= 0.9
 
 func clear_rows():
-	for row in range(BOARD_HEIGHT-1,0,-1):
-		while is_complete_row(row):
+	for row in range(board.height-1,0,-1):
+		while board.is_complete_row(row):
 			increase_score()
-			shift_down(row)
+			board.shift_down(row)
 
 func generated_shape_overlaps() -> bool:
 	for block_position in shape.block_positions():
-			if block_position.y >= 0 and not empty_position(block_position):
+			if block_position.y >= 0 and not board.is_empty_position(block_position):
 				return true
 	return false
 
 func shape_at_bottom():
 	var shape_color = shape.shape_type
 	for p in shape.block_positions():
-		tilemap.set_cellv(p, shape_color)
+		board.set_cellv(p, shape_color)
 	clear_rows()
 	generate_shape()
 	if generated_shape_overlaps():

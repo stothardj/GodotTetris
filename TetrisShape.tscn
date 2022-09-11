@@ -44,15 +44,19 @@ script = ExtResource( 2 )
 
 [node name="Block1" type="AnimatedSprite" parent="."]
 frames = SubResource( 1 )
+centered = false
 
 [node name="Block2" type="AnimatedSprite" parent="."]
 position = Vector2( -64, 0 )
 frames = SubResource( 1 )
+centered = false
 
 [node name="Block3" type="AnimatedSprite" parent="."]
 position = Vector2( 0, 64 )
 frames = SubResource( 1 )
+centered = false
 
 [node name="Block4" type="AnimatedSprite" parent="."]
 position = Vector2( 64, 64 )
 frames = SubResource( 1 )
+centered = false

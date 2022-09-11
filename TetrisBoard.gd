@@ -1,15 +1,17 @@
+tool
 extends TileMap
 
-export var width = 100
-export var height = 100
+export var width = 10
+export var height = 10
 
 const BOARD_BACKGROUND = 7
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	clear()
 
 func clear() -> void:
+	.clear()
 	for x in range(0, width):
 		for y in range(0, height):
 			set_cell(x, y, BOARD_BACKGROUND)

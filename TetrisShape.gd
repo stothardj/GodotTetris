@@ -16,9 +16,10 @@ export var block_scale = 1.0 setget set_block_scale
 export(int, "Z", "S", "Line", "Square", "T", "L", "L_Backwards") var shape_type = ShapeConfiguration.Z setget set_shape_type
 export var rotations = 0 setget set_rotations
 export var map_position = Vector2.ZERO setget set_map_position
+export(NodePath) var board_path
 
 onready var blocks = [get_node("Block1"), get_node("Block2"), get_node("Block3"), get_node("Block4")]
-var position_fn: FuncRef
+var board
 
 const SPRITE_SIZE = 64
 
@@ -34,10 +35,9 @@ const positions = [
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	if board_path:
+		board = get_node(board_path)
 	update_blocks()
-
-func set_position_fn(fn: FuncRef):
-	position_fn = fn
 
 func update_blocks():
 	update_block_scale()
@@ -84,8 +84,8 @@ func set_map_position(new_map_position):
 	if map_position == new_map_position:
 		return
 	map_position = new_map_position
-	if position_fn:
-		position = position_fn.call_func(map_position)
+	if board:
+		position = board.to_global(board.map_to_world(map_position))
 
 func block_positions(move: Vector2 = Vector2.ZERO, rotation_change = 0):
 	var configured_positions = positions[shape_type]

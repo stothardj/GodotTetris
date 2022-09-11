@@ -3,15 +3,11 @@ extends Node2D
 var ShapeResource = preload("res://TetrisShape.tscn")
 var ShapeScript = preload("res://TetrisShape.gd")
 
-const SPRITE_SIZE = 64
-const BLOCK_SCALE = 0.75
-const BLOCK_SIZE = SPRITE_SIZE * BLOCK_SCALE
-
-var shape = ShapeResource.instance()
-var shape_preview = ShapeResource.instance()
 var score = 0
 var start_wait_time
 
+onready var shape = $GameShape
+onready var shape_preview = $ShapePreview
 onready var board = $TetrisBoard
 onready var timer = $Timer
 onready var score_label = $ScoreLabel
@@ -19,11 +15,7 @@ onready var paused_label = $CanvasLayer/PausedLabel
 
 func _ready():
 	randomize()
-	board.scale = Vector2(BLOCK_SCALE, BLOCK_SCALE)
 	start_wait_time = timer.wait_time
-	shape.set_position_fn(funcref(self, "world_position"))
-	shape_preview.position = Vector2(670,200)
-	shape_preview.block_scale = BLOCK_SCALE
 	shape_preview.shape_type = randi() % ShapeScript.ShapeConfiguration.size()
 	restart()
 	add_child(shape)
@@ -35,14 +27,10 @@ func restart():
 	board.clear()
 	generate_shape()
 
-func world_position(map_position):
-	return board.position + board.map_to_world(map_position) * board.scale + Vector2(BLOCK_SIZE/2, BLOCK_SIZE/2)
-	
 func generate_shape():
 	shape.rotations = 0
 	shape.map_position = Vector2(board.width/2,0)
 	shape.shape_type = shape_preview.shape_type
-	shape.block_scale = BLOCK_SCALE
 	shape_preview.shape_type = randi() % ShapeScript.ShapeConfiguration.size()
 
 func all_valid_positions(block_positions):
